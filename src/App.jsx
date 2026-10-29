@@ -1,4 +1,6 @@
 import SearchBar from './components/SearchBar';
+import CurrentWeather from './components/CurrentWeather';
+
 
 
 function App() {
@@ -14,6 +16,8 @@ function App() {
         </p>
 
         <SearchBar />
+
+        <CurrentWeather />
       </main>
     </div>
   );
