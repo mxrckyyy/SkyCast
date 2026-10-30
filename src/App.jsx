@@ -1,6 +1,7 @@
 import SearchBar from './components/SearchBar';
 import CurrentWeather from './components/CurrentWeather';
 import WeatherDetails from './components/WeatherDetails';
+import FiveDayForecast from './components/FiveDayForecast';
 
 
 
@@ -21,6 +22,8 @@ function App() {
         <CurrentWeather />
 
         <WeatherDetails />
+
+        <FiveDayForecast />
       </main>
     </div>
   );
