@@ -40,3 +40,58 @@ export function isInsideCebu(latitude, longitude) {
         longitude <= CEBU_BOUNDS.maxLongitude
     );
 }
+
+export async function reverseGeocodeCebuLocation(latitude, longitude, locations) {
+    const url = new URL(
+        'https://api.bigdatacloud.net/data/reverse-geocode-client'
+    );
+
+    url.searchParams.set('latitude', latitude);
+    url.searchParams.set('longitude', longitude);
+    url.searchParams.set('localityLanguage', 'en');
+
+    const response = await fetch(url);
+
+    if (!response.ok) {
+        throw new Error('Unable to identify your current location.');
+    }
+
+    const data = await response.json();
+
+    //make sure the detected location is in tha philippines.
+    if (data.countryCode !== 'PH') {
+        throw new Error('Your location is outside Cebu.');
+    }
+
+    //get possible city or municipality names.
+    const possibleNames = [
+        data.city,
+        data.locality,
+        data.localityInfo?.administrative?.[0]?.name,
+    ]
+
+        .filter(Boolean)
+        .map((name) => name.toLowerCase().trim());
+
+    //match the detected name against our cebu locations.
+    if (!Array.isArray(locations)) {
+        throw new Error('Cebu locations data is not a valid array.');
+    }
+
+    const matchedLocation = locations.find((location) => {
+        const locationName = location.name.toLowerCase().trim();
+
+        return possibleNames.some((name) => {
+            return name === locationName || name.replace(/\s+city$/, '') ===
+                locationName.replace(/\s+city$/, '');
+        });
+    });
+
+    if (!matchedLocation) {
+        throw new Error(
+            'We could not identify a supported Cebu City or municipality.'
+        );
+    }
+
+    return matchedLocation;
+}

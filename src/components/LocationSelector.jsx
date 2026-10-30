@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import { Search, MapPin, Navigation } from 'lucide-react';
 import { cebuLocations } from '../data/cebuLocation';
-import { getCurrentCoordinates, isInsideCebu } from '../utils/location';
+import { getCurrentCoordinates, isInsideCebu, reverseGeocodeCebuLocation } from '../utils/location';
 
 
 function LocationSelector() {
@@ -21,11 +21,19 @@ function LocationSelector() {
             const { latitude, longitude } = coordinates;
 
             if (!isInsideCebu(latitude, longitude)) {
-                setGpsError('Your current location is outside Cebu.');
-                return;
+                throw new Error('Your current location is outside Cebu.');
             }
 
-            setGpsError('Location detected! Reverse geocoding will be added next.');
+            const location = await reverseGeocodeCebuLocation(
+                latitude,
+                longitude,
+                cebuLocations
+            );
+
+            setSelectedLocation(location.name);
+            setSearch('');
+
+            setGpsError(`Location detected: ${location.name}`);
 
         } catch (error) {
             setGpsError(error.message);
