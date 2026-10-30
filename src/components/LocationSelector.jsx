@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import { Search, MapPin, Navigation } from 'lucide-react';
 import { cebuLocations } from '../data/cebuLocation';
+import { getCurrentCoordinates, isInsideCebu } from '../utils/location';
 
 
 function LocationSelector() {
@@ -8,6 +9,30 @@ function LocationSelector() {
     const [selectedLocation, setSelectedLocation] = useState('Cebu City');
 
     const filteredLocations = cebuLocations.filter((location) => location.name.toLowerCase().includes(search.toLowerCase()));
+    const [gpsLoading, setGpsLoading] = useState(false);
+    const [gpsError, setGpsError] = useState('');
+
+    async function handleCurrentLocations() {
+        setGpsLoading(true);
+        setGpsError('');
+
+        try {
+            const coordinates = await getCurrentCoordinates();
+            const { latitude, longitude } = coordinates;
+
+            if (!isInsideCebu(latitude, longitude)) {
+                setGpsError('Your current location is outside Cebu.');
+                return;
+            }
+
+            setGpsError('Location detected! Reverse geocoding will be added next.');
+
+        } catch (error) {
+            setGpsError(error.message);
+        } finally {
+            setGpsLoading(false);
+        }
+    }
 
     return (
         <section className="mt-6 rounded-2xl border border-white/20 bg-white/15 p-5 backdrop-blur-md">
@@ -76,10 +101,19 @@ function LocationSelector() {
 
             <button
                 type="button"
-                className="mt-4 flex w-full items-center justify-center gap-2 rounded-xl bg-white/20 px-4 py-3 font-medium transition hover:bg-white/30">
+                onClick={handleCurrentLocations}
+                disabled={gpsLoading}
+                className="mt-4 flex w-full items-center justify-center gap-2 rounded-xl bg-white/20 px-4 py-3 font-medium transition hover:bg-white/30 disabled:cursor-not-allowed disabled:opacity-50"
+            >
                 <Navigation size={18} />
-                Use my current Location
+                {gpsLoading ? 'Detecting location...' : 'Use my current location'}
             </button>
+
+            {gpsError && (
+                <p className="mt-3 text-center text-sm text-white/80" role="status">
+                    {gpsError}
+                </p>
+            )}
         </section>
     );
 }

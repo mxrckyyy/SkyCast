@@ -2,6 +2,7 @@ import SearchBar from './components/SearchBar';
 import CurrentWeather from './components/CurrentWeather';
 import WeatherDetails from './components/WeatherDetails';
 import FiveDayForecast from './components/FiveDayForecast';
+import LocationSelector from './components/LocationSelector';
 
 
 
@@ -18,11 +19,9 @@ function App() {
         </p>
 
         <SearchBar />
-
+        <LocationSelector />
         <CurrentWeather />
-
         <WeatherDetails />
-
         <FiveDayForecast />
       </main>
     </div>
