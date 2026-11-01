@@ -35,5 +35,19 @@ export async function getWeatherData(latitude, longitude) {
         wind_speed_unit: 'kmh',
         timezone: 'Asia/Manila',
         forecast_days: '5',
-    })
+    });
+
+    const response = await fetch(`${WEATHER_API_URL}?${params}`);
+
+    if (!response.ok) {
+        throw new Error('Unable to retrieve weather data.');
+    }
+
+    const data = await response.json();
+
+    if (!data.current || !data.hourly || !data.daily) {
+        throw new Error('The weather API returned incomplete data.');
+    }
+
+    return data;
 }
