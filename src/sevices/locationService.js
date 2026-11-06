@@ -31,5 +31,21 @@ export async function getLocationCoordinates(locationName) {
         const isCebu = result.admin2?.toLowerCase().includes('cebu') ||
             result.admin1?.toLowerCase().includes('central visayas');
 
-    })
+        const isMatchingName =
+            normalizeName(result.name) === normalizeName(locationName);
+
+        return isPhilippines && isCebu && isMatchingName;
+
+    });
+
+    if (!matchedLocation) {
+        throw new Error('Unable to verfiy this location in Cebu.');
+
+    }
+
+    return {
+        name: matchedLocation.name,
+        latitude: matchedLocation.latitude,
+        longitude: matchedLocation.longitude,
+    };
 }
