@@ -4,10 +4,8 @@ import { cebuLocations } from '../data/cebuLocation';
 import { getCurrentCoordinates, isInsideCebu, reverseGeocodeCebuLocation } from '../utils/location';
 
 
-function LocationSelector() {
+function LocationSelector({ selectedLocation, onLocationChange }) {
     const [search, setSearch] = useState('');
-    const [selectedLocation, setSelectedLocation] = useState('Cebu City');
-
     const filteredLocations = cebuLocations.filter((location) => location.name.toLowerCase().includes(search.toLowerCase()));
     const [gpsLoading, setGpsLoading] = useState(false);
     const [gpsError, setGpsError] = useState('');
@@ -30,7 +28,7 @@ function LocationSelector() {
                 cebuLocations
             );
 
-            setSelectedLocation(location.name);
+            onLocationChange(location.name);
             setSearch('');
 
             setGpsError(`Location detected: ${location.name}`);
@@ -57,8 +55,10 @@ function LocationSelector() {
             </label>
 
             <div className="relative">
-                <Search size={20} className="absolute left-3 top1/2 -transslate-y-1/2 text-white/60" />\
-
+                <Search
+                    size={20}
+                    className="absolute left-3 top-1/2 -translate-y-1/2 text-white/60"
+                />
                 <input type="text"
                     value={search}
                     onChange={(event) => setSearch(event.target.value)}
@@ -73,8 +73,9 @@ function LocationSelector() {
                         key={location.name}
                         type="button"
                         onClick={() => {
-                            setSelectedLocation(location.name);
+                            onLocationChange(location.name);
                             setSearch('');
+                            setGpsError('');
                         }}
                         className={`flex w-full items-center justify-between rounded-xl px-4 py-3 text-left transition 
                         ${selectedLocation === location.name ? 'bg-white/25' :
@@ -91,7 +92,7 @@ function LocationSelector() {
                 ))}
 
                 {filteredLocations.length === 0 && (
-                    <p className="pu-4 text-center text-sm text-white/60">
+                    <p className="py-4 text-center text-sm text-white/60">
                         No Cebu location found.
                     </p>
                 )}

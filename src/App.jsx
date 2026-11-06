@@ -66,7 +66,42 @@ function App() {
         <SearchBar />
 
         {/* Cebu Location Selector */}
-        <LocationSelector />
+        <LocationSelector
+          selectedLocation={selectedLocation}
+          onLocationSelect={setSelectedLocation}
+        />
+
+        {loading && (
+          <p className="mt-4 text-center">
+            Loading weather data...
+          </p>
+        )}
+
+        {error && (
+          <p className="mt-4 text-center text-yellow-200">
+            {error}
+          </p>
+        )}
+
+        {weatherData && !loading && (
+          <div className="mt-4 rounded-xl bg-white/15 p-4">
+            <p className="text-sm text-white/70">
+              Live weather for {selectedLocation}
+            </p>
+
+            <p className="mt-2 text-3xl font-semibold">
+              {weatherData.current.temperature_2m}°C
+            </p>
+
+            <p className="text-sm text-white/80">
+              Humidity: {weatherData.current.relative_humidity_2m}%
+            </p>
+
+            <p className="text-sm text-white/80">
+              Wind: {weatherData.current.wind_speed_10m} km/h
+            </p>
+          </div>
+        )}
 
         {/* Current Weather */}
         <CurrentWeather />
